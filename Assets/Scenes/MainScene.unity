@@ -488,6 +488,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 1746600195}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &856372024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -662,7 +674,7 @@ MonoBehaviour:
   m_Width: 20
   m_Hight: 12
   m_WallPrefab: {fileID: 4595766351501124566, guid: 327cc030a68cd074087e129b325285f9, type: 3}
-  m_FruitPrefab: {fileID: 1891036367612323632, guid: 84a095b4b3503a540b3fd8756fe6b35c, type: 3}
+  m_FoodPrefab: {fileID: 1891036367612323632, guid: 84a095b4b3503a540b3fd8756fe6b35c, type: 3}
   m_ScoreText: {fileID: 1746600197}
 --- !u!4 &1250209924
 Transform:
@@ -876,7 +888,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1746600196
 RectTransform:
   m_ObjectHideFlags: 0

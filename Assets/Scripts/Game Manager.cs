@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int m_Width = 20;
     [SerializeField] private int m_Hight = 12;
     [SerializeField] private GameObject m_WallPrefab;
-    [SerializeField] private GameObject m_FruitPrefab;
+    [SerializeField] private GameObject m_FoodPrefab;
     [SerializeField] private TextMeshProUGUI m_ScoreText;
     
     
@@ -110,7 +110,7 @@ public class GameManager : MonoBehaviour
     private void spawnFood()
     {
         var foodPosition = getNextFoodPosition();
-        m_Food = Instantiate(m_FruitPrefab, foodPosition, quaternion.identity);
+        m_Food = Instantiate(m_FoodPrefab, foodPosition, quaternion.identity);
     }
     
     private Vector3 getNextFoodPosition()

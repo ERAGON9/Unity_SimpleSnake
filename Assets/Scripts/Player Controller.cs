@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
         }
         
         var playerInput = GetInputOnUpdate();
-        if (playerInput != Vector3.zero)
+        if (playerInput != Vector3.zero  && isValidPlayerInput(playerInput))
         {
             m_ResentPlayerMovement = playerInput;
         }
@@ -91,6 +91,16 @@ public class PlayerController : MonoBehaviour
             
             m_StepTimer = 0;
         }
+    }
+
+    private bool isValidPlayerInput(Vector3 i_PlayerInput)
+    {
+        bool legalInput = !(m_ResentPlayerMovement == Vector3.right && i_PlayerInput == Vector3.left ||
+                            m_ResentPlayerMovement == Vector3.left && i_PlayerInput == Vector3.right ||
+                            m_ResentPlayerMovement == Vector3.up && i_PlayerInput == Vector3.down ||
+                            m_ResentPlayerMovement == Vector3.down && i_PlayerInput == Vector3.up);
+        
+        return legalInput;
     }
 
     private Vector3 GetInputOnUpdate()
