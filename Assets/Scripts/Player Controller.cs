@@ -8,60 +8,88 @@ using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private GameManager m_gameManager;
-    [SerializeField] private GameObject m_sankePartPrefab;
-    [SerializeField] private float m_StepTimeOut = 0.4f;
+    public static PlayerController Instance { get; private set; }
+    
+    [FormerlySerializedAs("m_gameManager")]
+    [Header("Properties")]
+    [SerializeField] private GameObject m_SankePartPrefab;
+    [SerializeField] private float m_StepTimeOut = 0.2f;
 
-    private float _stepTimer = 0;
-    private Vector3 _resentPlayerMovement;
-    private List<GameObject> _snakeParts = new ();
+    private float m_StepTimer = 0;
+    private Vector3 m_ResentPlayerMovement;
+    
+    private List<GameObject> m_SnakeParts = new();
     
     private void Awake()
     {
-        m_gameManager = FindObjectOfType<GameManager>();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        var initialSnakePart = Instantiate(m_sankePartPrefab, Vector3.zero, quaternion.identity);
-        _snakeParts.Add(initialSnakePart);
-    }
 
+    }
+    
+    public void StartGameSession()
+    {
+        var initialSnakePart = Instantiate(m_SankePartPrefab, Vector3.zero, quaternion.identity);
+        m_SnakeParts.Add(initialSnakePart);
+    }
+    
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.Instance.IsGameRunning)
+        {
+            return;
+        }
+        
         var playerInput = GetInputOnUpdate();
         if (playerInput != Vector3.zero)
         {
-            _resentPlayerMovement = playerInput;
+            m_ResentPlayerMovement = playerInput;
         }
         
-        _stepTimer += Time.deltaTime;
-        if (_stepTimer >= m_StepTimeOut)
+        m_StepTimer += Time.deltaTime;
+        if (m_StepTimer >= m_StepTimeOut)
         {
-            // TODO: refactor.
-            if (_resentPlayerMovement == Vector3.zero)
+            // TODO: refactor. (Only at the beginning of the game.)
+            if (m_ResentPlayerMovement == Vector3.zero)
                 return;
             
-            var newSnakeHeadPosition = _snakeParts.Last().transform.position + _resentPlayerMovement;
-            var newSnakeHead = Instantiate(m_sankePartPrefab, newSnakeHeadPosition, quaternion.identity);
-            _snakeParts.Add(newSnakeHead);
+            var newSnakeHeadPosition = m_SnakeParts.Last().transform.position + m_ResentPlayerMovement;
+
+            var contactedWall = GameManager.Instance.IsPositionOnWall(newSnakeHeadPosition);
+            if (contactedWall)
+            {
+                GameManager.Instance.GameOver();
+                return;
+            }
             
-            var foundFood = m_gameManager.IsThereFoodInPosition(newSnakeHead.transform.position);
+            var newSnakeHead = Instantiate(m_SankePartPrefab, newSnakeHeadPosition, quaternion.identity);
+            m_SnakeParts.Add(newSnakeHead);
+            
+            var foundFood = GameManager.Instance.IsThereFoodInPosition(newSnakeHead.transform.position);
             if (foundFood)
             {
-                m_gameManager.EatFood();
+                GameManager.Instance.EatFood();
             }
-
-            if (!foundFood)
+            else  // (!foundFood)
             {
-                var snakeTail = _snakeParts.First();
-                _snakeParts.Remove(snakeTail);
+                var snakeTail = m_SnakeParts.First();
+                m_SnakeParts.Remove(snakeTail);
                 Destroy(snakeTail);
             }
             
-            _stepTimer = 0;
+            m_StepTimer = 0;
         }
     }
 
@@ -87,5 +115,12 @@ public class PlayerController : MonoBehaviour
         }
 
         return movementDirection;
+    }
+    
+    public bool IsPositionOnSnake(Vector3 i_Position)
+    {
+        return m_SnakeParts.Any(snakePart =>
+            Mathf.Approximately(snakePart.transform.position.x, i_Position.x) &&
+            Mathf.Approximately(snakePart.transform.position.y, i_Position.y));
     }
 }
